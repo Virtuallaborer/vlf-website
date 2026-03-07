@@ -339,3 +339,9 @@ footer {
     align-items: center;
   }
 }
+/* TPN callout responsive fix */
+@media (max-width: 768px) {
+  [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
