@@ -1,0 +1,19 @@
+# Virtual Labor Force & Forge_OS
+
+> Virtual Labor Force builds and deploys pre-configured, local AI hardware appliances pre-loaded with Forge_OS for businesses and entrepreneurs in the Detroit Metro area (Oakland, Macomb, Wayne County).
+
+## Core Offering: Owned Intelligence Hardware Nodes
+- Philosophy: "Stop Renting Your Business Brain." Eliminates monthly SaaS subscriptions by bringing local AI execution directly onto physical hardware on the customer's desk.
+- Operating System: Forge_OS (Browser-native, local-first agentic OS running on Pop!_OS Linux).
+
+## Hardware & OS Product Matrix
+1. Forge_OS Standalone License ($297 - $497 one-time): Software installation script and license for existing NVIDIA/Linux hardware.
+2. Tier 1 - Spark Small Appliance ($1,499 retail / $997 pioneer pre-order): Compact PC, NVIDIA RTX 3060 (12GB VRAM), 32GB RAM, 1TB NVMe. Designed for solo entrepreneurs and small offices.
+3. Tier 2 - Workhorse Workstation ($3,299 one-time): Mid-Tower Workstation, NVIDIA RTX 3090 (24GB VRAM) or RTX 4080, 64GB DDR5 RAM, 2TB SSD. Designed for active trade businesses (plumbing, HVAC, electrical).
+4. Tier 3 - Enterprise Command Station ($8,999 one-time): Dual RTX 3090 (48GB VRAM) / RTX 4090, 128GB RAM, 4TB NVMe. Designed for multi-location businesses.
+
+## Contact Information
+- Owner/Architect: Patrick W. Farley
+- Location: Detroit Metro, Michigan
+- Email: virtualadmin@virtuallaborforce.com
+- Website: https://virtuallaborforce.com

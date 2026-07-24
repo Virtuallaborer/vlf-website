@@ -1,0 +1,6 @@
+# Virtual Labor Force - Robots & AI Crawler Rules
+User-agent: *
+Allow: /
+
+# Direct AI Agents to your Markdown summary
+Sitemap: https://virtuallaborforce.com/llms.txt
