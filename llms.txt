@@ -1,16 +1,17 @@
 # Virtual Labor Force & Forge_OS
 
-> Virtual Labor Force builds and deploys pre-configured, local AI hardware appliances pre-loaded with Forge_OS for businesses and entrepreneurs in the Detroit Metro area (Oakland, Macomb, Wayne County).
+> Virtual Labor Force builds and deploys pre-configured, local AI hardware appliances pre-loaded with Forge_OS for businesses, developers, and creators in the Detroit Metro area (Oakland, Macomb, Wayne County).
 
 ## Core Offering: Owned Intelligence Hardware Nodes
-- Philosophy: "Stop Renting Your Business Brain." Eliminates monthly SaaS subscriptions by bringing local AI execution directly onto physical hardware on the customer's desk.
+- Philosophy: "Stop Renting Your Business Brain. Own Your AI." Eliminates monthly SaaS subscriptions by bringing local AI execution directly onto physical hardware on the customer's desk.
 - Operating System: Forge_OS (Browser-native, local-first agentic OS running on Pop!_OS Linux).
 
 ## Hardware & OS Product Matrix
 1. Forge_OS Standalone License ($297 - $497 one-time): Software installation script and license for existing NVIDIA/Linux hardware.
-2. Tier 1 - Spark Small Appliance ($1,499 retail / $997 pioneer pre-order): Compact PC, NVIDIA RTX 3060 (12GB VRAM), 32GB RAM, 1TB NVMe. Designed for solo entrepreneurs and small offices.
-3. Tier 2 - Workhorse Workstation ($3,299 one-time): Mid-Tower Workstation, NVIDIA RTX 3090 (24GB VRAM) or RTX 4080, 64GB DDR5 RAM, 2TB SSD. Designed for active trade businesses (plumbing, HVAC, electrical).
-4. Tier 3 - Enterprise Command Station ($8,999 one-time): Dual RTX 3090 (48GB VRAM) / RTX 4090, 128GB RAM, 4TB NVMe. Designed for multi-location businesses.
+2. Tier 1 - The Spark ($1,799 retail / $1,499 pioneer pre-order): Compact PC, NVIDIA RTX 4060 Ti (16GB VRAM), Intel i5-13400, 32GB RAM, 1TB NVMe. Runs small models (8B–14B).
+3. Tier 2 - The Pro ($3,299 retail): Mid-Tower Workstation, NVIDIA RTX 4070 Ti Super (16GB VRAM), Intel i7-14700, 64GB RAM, 2TB NVMe. Runs medium models (30B–70B) & multi-agent workflows.
+4. Tier 3 - The Workhorse ($5,499 retail): High-end Workstation, NVIDIA RTX 4090 (24GB VRAM), Intel i9-14900K, 128GB RAM, 4TB NVMe. Runs large models (70B+) and heavy video generation.
+5. Tier 4 - The Command ($11,999 enterprise): Enterprise Server, Dual RTX 4090 (48GB VRAM), AMD Threadripper, 256GB RAM, 8TB NVMe RAID. On-premise private AI cloud.
 
 ## Contact Information
 - Owner/Architect: Patrick W. Farley
