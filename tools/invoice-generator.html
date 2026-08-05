@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Invoice Generator | Virtual Labor Force</title>
+  <meta name="description" content="Create professional invoices with logo, line items, labor costs, and signatures. Runs 100% in your browser. Free tool from Virtual Labor Force." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #0057FF;
+      --color-accent: #00C2FF;
+      --color-text: #1a1a1a;
+      --color-text-soft: #555;
+      --color-border: #e5e7eb;
+      --color-bg: #f8fafc;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      margin: 0;
+      padding: 0;
+    }
+
+    .tool-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px 60px;
+    }
+
+    .tool-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .tool-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    .tool-header p {
+      color: var(--color-text-soft);
+      font-size: 1rem;
+    }
+
+    .invoice-box {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-text-soft);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .logo-preview {
+      max-width: 160px;
+      max-height: 80px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    th {
+      text-align: left;
+      font-size: 0.85rem;
+      padding: 10px 8px;
+      border-bottom: 2px solid var(--color-border);
+      color: var(--color-text-soft);
+    }
+
+    td {
+      padding: 8px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    td input {
+      width: 100%;
+      border: 1px solid transparent;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    td input:focus {
+      border-color: var(--color-primary);
+      outline: none;
+    }
+
+    .btn-remove {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .totals {
+      text-align: right;
+      margin-top: 16px;
+    }
+
+    .totals div {
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .totals .grand-total {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .signatures {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .sig-box {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    canvas {
+      border: 1px dashed var(--color-border);
+      border-radius: 8px;
+      width: 100%;
+      height: 120px;
+      touch-action: none;
+      background: #fafafa;
+    }
+
+    .sig-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--color-text-soft);
+      margin-top: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .invoice-box { padding: 20px; }
+      .tool-header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tool-container">
+    <div class="tool-header">
+      <h1>Free Invoice Generator</h1>
+      <p>Create professional invoices with your logo, line items, labor costs, and signatures.<br>Runs 100% in your browser — nothing is uploaded to any server.</p>
+    </div>
+
+    <div id="invoice" class="invoice-box">
+
+      <!-- Logo + Invoice Info -->
+      <div class="row">
+        <div class="col">
+          <label>Your Logo (optional)</label>
+          <input type="file" id="logoInput" accept="image/*" />
+          <img id="logoPreview" class="logo-preview" alt="Logo preview" />
+        </div>
+        <div class="col">
+          <label>Invoice Number</label>
+          <input type="text" id="invoiceNumber" placeholder="INV-1001" value="INV-1001" />
+          <label style="margin-top:12px;">Invoice Date</label>
+          <input type="date" id="invoiceDate" />
+        </div>
+      </div>
+
+      <!-- From / Bill To -->
+      <div class="row">
+        <div class="col">
+          <label>From (Your Business)</label>
+          <textarea id="fromInfo" placeholder="Your Business Name&#10;Address&#10;Phone / Email"></textarea>
+        </div>
+        <div class="col">
+          <label>Bill To (Client)</label>
+          <textarea id="billToInfo" placeholder="Client Name&#10;Address&#10;Phone / Email"></textarea>
+        </div>
+      </div>
+
+      <!-- Labor Costs -->
+      <div class="row">
+        <div class="col">
+          <label>Labor Costs ($)</label>
+          <input type="number" id="laborCosts" min="0" step="0.01" value="0" placeholder="0.00" />
+        </div>
+      </div>
+
+      <!-- Line Items -->
+      <table>
+        <thead>
+          <tr>
+            <th style="width:45%">Description</th>
+            <th style="width:15%">Qty</th>
+            <th style="width:20%">Unit Price ($)</th>
+            <th style="width:15%">Amount</th>
+            <th style="width:5%"></th>
+          </tr>
+        </thead>
+        <tbody id="lineItems">
+          <!-- rows added by JS -->
+        </tbody>
+      </table>
+
+      <button type="button" class="btn btn-secondary" onclick="addLineItem()">+ Add Line Item</button>
+
+      <!-- Totals -->
+      <div class="totals">
+        <div>Labor Costs: $<span id="laborDisplay">0.00</span></div>
+        <div>Line Items Subtotal: $<span id="subtotalDisplay">0.00</span></div>
+        <div class="grand-total">Total: $<span id="totalDisplay">0.00</span></div>
+      </div>
+
+      <!-- Signatures -->
+      <div class="signatures">
+        <div class="sig-box">
+          <label>Creator Signature</label>
+          <canvas id="sigCreator"></canvas>
+          <div class="sig-actions">
+            <button type="button" class="btn btn-secondary" onclick="clearSignature('sigCreator')">Clear</button>
+          </div>
+        </div>
+        <div class="sig-box">
+          <label>Receiver Signature</label>
+          <canvas id="sigReceiver"></canvas>
+          <div class="sig-actions">
+            <button type="button" class="btn btn-secondary" onclick="clearSignature('sigReceiver')">Clear</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+      <button class="btn btn-outline" onclick="shareEmail()">Share via Email</button>
+    </div>
+
+    <p class="note">
+      This tool runs entirely in your browser. No data is sent to our servers.<br>
+      Free tool by <a href="../index.html">Virtual Labor Force</a>
+    </p>
+  </div>
+
+  <script>
+    // Set today's date
+    document.getElementById('invoiceDate').valueAsDate = new Date();
+
+    // Logo upload
+    document.getElementById('logoInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = document.getElementById('logoPreview');
+          img.src = event.target.result;
+          img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Line items
+    function addLineItem(desc = '', qty = 1, price = 0) {
+      const tbody = document.getElementById('lineItems');
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><input type="text" class="desc" value="${desc}" placeholder="Description" oninput="calculateTotals()"></td>
+        <td><input type="number" class="qty" value="${qty}" min="0" step="1" oninput="calculateTotals()"></td>
+        <td><input type="number" class="price" value="${price}" min="0" step="0.01" oninput="calculateTotals()"></td>
+        <td class="amount">$0.00</td>
+        <td><button type="button" class="btn-remove" onclick="this.closest('tr').remove(); calculateTotals();">✕</button></td>
+      `;
+      tbody.appendChild(row);
+      calculateTotals();
+    }
+
+    // Start with one empty row
+    addLineItem();
+
+    function calculateTotals() {
+      let subtotal = 0;
+      document.querySelectorAll('#lineItems tr').forEach(row => {
+        const qty = parseFloat(row.querySelector('.qty').value) || 0;
+        const price = parseFloat(row.querySelector('.price').value) || 0;
+        const amount = qty * price;
+        row.querySelector('.amount').textContent = '$' + amount.toFixed(2);
+        subtotal += amount;
+      });
+
+      const labor = parseFloat(document.getElementById('laborCosts').value) || 0;
+      const total = subtotal + labor;
+
+      document.getElementById('laborDisplay').textContent = labor.toFixed(2);
+      document.getElementById('subtotalDisplay').textContent = subtotal.toFixed(2);
+      document.getElementById('totalDisplay').textContent = total.toFixed(2);
+    }
+
+    document.getElementById('laborCosts').addEventListener('input', calculateTotals);
+
+    // Signature pads
+    function setupSignature(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      function resize() {
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        ctx.scale(ratio, ratio);
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#111';
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      }
+
+      function start(e) {
+        drawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        e.preventDefault();
+      }
+
+      function draw(e) {
+        if (!drawing) return;
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        e.preventDefault();
+      }
+
+      function stop() {
+        drawing = false;
+      }
+
+      canvas.addEventListener('mousedown', start);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stop);
+      canvas.addEventListener('mouseout', stop);
+
+      canvas.addEventListener('touchstart', start);
+      canvas.addEventListener('touchmove', draw);
+      canvas.addEventListener('touchend', stop);
+    }
+
+    setupSignature('sigCreator');
+    setupSignature('sigReceiver');
+
+    function clearSignature(id) {
+      const canvas = document.getElementById(id);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Download PDF
+    function downloadPDF() {
+      const element = document.getElementById('invoice');
+      const opt = {
+        margin:       0.4,
+        filename:     (document.getElementById('invoiceNumber').value || 'invoice') + '.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    // Share via Email
+    function shareEmail() {
+      const invNum = document.getElementById('invoiceNumber').value || 'Invoice';
+      const total = document.getElementById('totalDisplay').textContent;
+      const subject = encodeURIComponent(`Invoice ${invNum}`);
+      const body = encodeURIComponent(`Please find the attached invoice (${invNum}).\n\nTotal due: $${total}\n\nThank you.`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+  </script>
+</body>
+</html>
