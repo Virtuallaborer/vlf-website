@@ -3,4 +3,6 @@ User-agent: *
 Allow: /
 
 # Direct AI Agents to your Markdown summary
+
+Sitemap: https://virtuallaborforce.com/sitemap.xml
 Sitemap: https://virtuallaborforce.com/llms.txt
