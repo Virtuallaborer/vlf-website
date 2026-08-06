@@ -472,9 +472,9 @@
                 <div data-id="116" class="section-header">Signatures</div>
                 <div data-id="117" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div data-id="118">
-                        <p data-id="119" class="text-xs font-semibold text-txt-muted mb-2" id="creator-sig-label-mn89">Creator Signature</p>
-                        <canvas data-id="120" class="signature-canvas w-full" id="creator-sig-canvas-op01" height="120"></canvas>
-                        <button data-id="121" class="text-xs text-txt-muted mt-1 hover:text-danger cursor-pointer bg-transparent border-none font-medium p-1" id="clear-creator-sig-qr23">Clear</button>
+                        <p data-id="119" class="text-xs font-semibold text-txt-muted mb-2" id="contractor-sig-label-mn89">Contractor Signature</p>
+                        <canvas data-id="120" class="signature-canvas w-full" id="contractor-sig-canvas-op01" height="120"></canvas>
+                        <button data-id="121" class="text-xs text-txt-muted mt-1 hover:text-danger cursor-pointer bg-transparent border-none font-medium p-1" id="clear-contractor-sig-qr23">Clear</button>
                     </div>
                     <div data-id="122">
                         <p data-id="123" class="text-xs font-semibold text-txt-muted mb-2" id="client-sig-label-st45">Client Signature</p>
@@ -580,12 +580,12 @@
                 <!-- SIGNATURES -->
                 <div data-id="184" class="grid grid-cols-2 gap-6 mt-8 pt-6 border-t" style="border-color:#e5e7eb;">
                     <div data-id="185">
-                        <div data-id="186" class="h-16 mb-1 flex items-end" id="preview-creator-sig-area-ij23">
-                            <img data-id="187" id="preview-creator-sig-img-kl45" class="hidden max-h-14" alt="Creator signature" />
+                        <div data-id="186" class="h-16 mb-1 flex items-end" id="preview-contractor-sig-area-ij23">
+                            <img data-id="187" id="preview-contractor-sig-img-kl45" class="hidden max-h-14" alt="Contractor signature" />
                         </div>
                         <div data-id="188" class="border-t border-txt pt-1">
-                            <p data-id="189" class="text-xs font-semibold" id="preview-creator-sig-name-mn67">Creator</p>
-                            <p data-id="190" class="text-xs text-txt-muted">Creator</p>
+                            <p data-id="189" class="text-xs font-semibold" id="preview-contractor-sig-name-mn67">Contractor</p>
+                            <p data-id="190" class="text-xs text-txt-muted">Contractor</p>
                         </div>
                     </div>
                     <div data-id="191">
@@ -859,7 +859,7 @@
             notesSection.classList.add('hidden');
         }
         // Signatures
-        const creatorSigImg = document.getElementById('preview-creator-sig-img-kl45');
+        const creatorSigImg = document.getElementById('preview-contractor-sig-img-kl45');
         if (state.creatorSig) {
             creatorSigImg.classList.remove('hidden');
             creatorSigImg.src = state.creatorSig;
@@ -874,10 +874,10 @@
             clientSigImg.classList.add('hidden');
         }
         // Signature names
-        document.getElementById('preview-creator-sig-name-mn67').textContent = state.fromName || 'Creator';
+        document.getElementById('preview-contractor-sig-name-mn67').textContent = state.fromName || 'Contractor';
         document.getElementById('preview-client-sig-name-st23').textContent = state.toContact || state.toCompany || 'Client';
         // Creator sig label
-        document.getElementById('creator-sig-label-mn89').textContent = (state.fromName || 'Creator') + ' — Signature';
+        document.getElementById('contractor-sig-label-mn89').textContent = (state.fromName || 'Contractor') + ' — Signature';
         document.getElementById('client-sig-label-st45').textContent = (state.toContact || state.toCompany || 'Client') + ' — Signature';
     }
 
