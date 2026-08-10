@@ -275,13 +275,14 @@
       }
       .field-group { margin-bottom: 10px; }
 
-      /* Printing Optimization to fix alignment & multi-page PDF generation */
+      /* Printing Optimization */
       @media print {
         .no-print, nav, footer, .action-bar, .left-panel { display: none !important; }
         body, html { background: #fff !important; padding: 0 !important; margin: 0 !important; }
         #right-panel-yz01 { width: 100% !important; padding: 0 !important; background: transparent !important; }
         .preview-doc { box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; }
-        @page { size: auto; margin: 15mm; }
+        .preview-doc a { text-decoration: none !important; color: #0057FF !important; }
+        @page { size: auto; margin: 12mm; }
       }
 
       @media (max-width: 767px) {
@@ -343,12 +344,12 @@
                 </div>
             </div>
 
-            <!-- 2. Document Meta -->
+            <!-- 2. Document Details -->
             <div data-id="21" class="section-card">
                 <div data-id="22" class="section-header">Document Details</div>
-                <div data-id="23" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div data-id="23" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div data-id="24" class="field-group">
-                        <label data-id="25" class="field-label" for="invoice-num-ij90">Invoice #</label>
+                        <label data-id="25" class="field-label" for="invoice-num-ij90">Invoice / Est #</label>
                         <input data-id="26" type="text" id="invoice-num-ij90" placeholder="INV-0001" data-field="invoiceNum" />
                     </div>
                     <div data-id="27" class="field-group">
@@ -358,6 +359,10 @@
                     <div data-id="30" class="field-group">
                         <label data-id="31" class="field-label" for="due-date-mn34">Due Date</label>
                         <input data-id="32" type="date" id="due-date-mn34" data-field="dueDate" />
+                    </div>
+                    <div class="field-group" id="deposit-paid-group">
+                        <label class="field-label" for="deposit-paid-ij91">Deposit Paid ($)</label>
+                        <input type="number" id="deposit-paid-ij91" placeholder="Auto (50%)" min="0" step="0.01" data-field="depositPaid" />
                     </div>
                 </div>
             </div>
@@ -513,7 +518,7 @@
         <div data-id="127" class="w-full md:w-[55%] lg:w-[60%] bg-surface-alt p-3 sm:p-6 overflow-y-auto" id="right-panel-yz01">
             <div data-id="128" class="preview-doc mx-auto" style="max-width:700px;" id="preview-doc-ab23">
 
-                <!-- HEADER WITH CLEAR ALIGNMENT -->
+                <!-- HEADER -->
                 <div data-id="129" class="flex flex-row justify-between items-start gap-4 mb-6 pb-4 border-b border-gray-200">
                     <div data-id="130" id="preview-logo-area-cd45" class="w-1/2">
                         <div data-id="131" id="preview-logo-placeholder-ef67" class="w-20 h-14 bg-surface-bg rounded flex items-center justify-center text-xs text-txt-light font-semibold">LOGO</div>
@@ -527,7 +532,7 @@
                     </div>
                 </div>
 
-                <!-- FROM / BILL TO (EXACT GRID & MARGIN WRAPPING PREVENT BLEEDING) -->
+                <!-- FROM / BILL TO -->
                 <div data-id="138" class="grid grid-cols-2 gap-4 sm:gap-8 mb-6 text-xs sm:text-sm">
                     <div data-id="139" class="break-words">
                         <p data-id="140" class="text-xs font-bold uppercase tracking-wide text-txt-muted mb-1">From</p>
@@ -586,6 +591,13 @@
                             <span data-id="176" class="text-txt-muted">Subtotal</span>
                             <span data-id="177" class="font-semibold tabular-nums" id="preview-subtotal-wx01">$0.00</span>
                         </div>
+
+                        <!-- DEPOSIT PAID CREDIT ROW -->
+                        <div id="preview-deposit-paid-row" class="hidden flex justify-between py-1.5 text-sm text-emerald-600 font-medium">
+                            <span>Less Deposit Paid</span>
+                            <span class="tabular-nums" id="preview-deposit-paid-amount">-$0.00</span>
+                        </div>
+
                         <div data-id="178" class="flex justify-between py-2 border-t-2 border-brand-500" id="preview-total-row-yz23">
                             <span data-id="179" class="font-bold text-brand-500" id="preview-total-label-ab45">Total Due</span>
                             <span data-id="180" class="font-bold text-brand-500 text-lg tabular-nums" id="preview-total-amount-cd67">$0.00</span>
@@ -620,6 +632,15 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- FOOTER BRANDING LINK -->
+                <div class="mt-8 pt-3 border-t border-gray-100 text-center">
+                    <p class="text-[10px] text-gray-400 font-normal tracking-wide">
+                        Invoice generated using Virtual Labor Force’s FREE Invoice tool at 
+                        <a href="https://virtuallaborforce.com" target="_blank" rel="noopener" class="text-brand-500 underline hover:text-brand-700">virtuallaborforce.com</a>
+                    </p>
+                </div>
+
             </div>
 
             <div data-id="197" class="h-4"></div>
@@ -657,6 +678,7 @@
         invoiceNum: '',
         docDate: '',
         dueDate: '',
+        depositPaid: '',
         logo: '',
         fromBusiness: '',
         fromName: '',
@@ -865,14 +887,31 @@
 
         const subtotal = lineItemsTotal + laborTotal;
         document.getElementById('preview-subtotal-wx01').textContent = formatCurrency(subtotal);
+        
+        const depositRow = document.getElementById('preview-deposit-paid-row');
+        const depositAmountEl = document.getElementById('preview-deposit-paid-amount');
         const totalLabel = document.getElementById('preview-total-label-ab45');
         const totalAmount = document.getElementById('preview-total-amount-cd67');
-        
+
         if (state.docType === 'deposit') {
+            depositRow.classList.add('hidden');
             totalLabel.textContent = 'Deposit Due (50%)';
             totalAmount.textContent = formatCurrency(subtotal / 2);
+        } else if (state.docType === 'invoice') {
+            let paidAmount = subtotal / 2;
+            if (state.depositPaid !== '' && state.depositPaid !== undefined && !isNaN(parseFloat(state.depositPaid))) {
+                paidAmount = parseFloat(state.depositPaid);
+            }
+
+            const balanceDue = Math.max(0, subtotal - paidAmount);
+
+            depositRow.classList.remove('hidden');
+            depositAmountEl.textContent = '-' + formatCurrency(paidAmount);
+            totalLabel.textContent = 'Balance Due';
+            totalAmount.textContent = formatCurrency(balanceDue);
         } else {
-            totalLabel.textContent = 'Total Due';
+            depositRow.classList.add('hidden');
+            totalLabel.textContent = 'Total Estimate';
             totalAmount.textContent = formatCurrency(subtotal);
         }
 
@@ -1184,6 +1223,13 @@
             body += `\nSubtotal: ${formatCurrency(subtotal)}\n`;
             if (state.docType === 'deposit') {
                 body += `Deposit Due (50%): ${formatCurrency(subtotal / 2)}\n`;
+            } else if (state.docType === 'invoice') {
+                let paidAmount = subtotal / 2;
+                if (state.depositPaid !== '' && !isNaN(parseFloat(state.depositPaid))) {
+                    paidAmount = parseFloat(state.depositPaid);
+                }
+                body += `Less Deposit Paid: -${formatCurrency(paidAmount)}\n`;
+                body += `Balance Due: ${formatCurrency(Math.max(0, subtotal - paidAmount))}\n`;
             } else {
                 body += `Total Due: ${formatCurrency(subtotal)}\n`;
             }
@@ -1209,6 +1255,7 @@
                 invoiceNum: '',
                 docDate: '',
                 dueDate: '',
+                depositPaid: '',
                 logo: '',
                 fromBusiness: '',
                 fromName: '',
