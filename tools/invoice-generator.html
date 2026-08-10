@@ -9,8 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -114,7 +112,7 @@
         background: var(--primary);
         color: #fff;
         border-radius: 8px;
-        padding: 10px 22px;
+        padding: 10px 18px;
         font-weight: 600;
         border: none;
         cursor: pointer;
@@ -122,6 +120,7 @@
         font-family: inherit;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
         transition: background 0.15s;
       }
@@ -131,13 +130,14 @@
         color: var(--primary);
         border: 1.5px solid var(--primary);
         border-radius: 8px;
-        padding: 10px 22px;
+        padding: 10px 18px;
         font-weight: 600;
         cursor: pointer;
         font-size: 14px;
         font-family: inherit;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
         transition: background 0.15s;
       }
@@ -147,19 +147,20 @@
         color: #dc2626;
         border: 1.5px solid #dc2626;
         border-radius: 8px;
-        padding: 10px 22px;
+        padding: 10px 18px;
         font-weight: 600;
         cursor: pointer;
         font-size: 14px;
         font-family: inherit;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
         transition: background 0.15s;
       }
       .btn-danger:hover { background: #fef2f2; }
       .pill-btn {
-        padding: 8px 18px;
+        padding: 8px 16px;
         border-radius: 999px;
         font-size: 13px;
         font-weight: 600;
@@ -228,6 +229,7 @@
       .left-panel::-webkit-scrollbar { width: 5px; }
       .left-panel::-webkit-scrollbar-track { background: transparent; }
       .left-panel::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+      
       /* Preview styles */
       .preview-doc {
         background: #fff;
@@ -260,7 +262,7 @@
         border-top: 1px solid var(--border);
         padding: 14px 24px;
         display: flex;
-        gap: 12px;
+        gap: 8px;
         z-index: 100;
         flex-wrap: wrap;
       }
@@ -272,14 +274,20 @@
         display: block;
       }
       .field-group { margin-bottom: 10px; }
+
+      /* Printing Optimization to fix alignment & multi-page PDF generation */
       @media print {
-        .no-print { display: none !important; }
-        body { background: #fff; }
-        .preview-doc { box-shadow: none; }
+        .no-print, nav, footer, .action-bar, .left-panel { display: none !important; }
+        body, html { background: #fff !important; padding: 0 !important; margin: 0 !important; }
+        #right-panel-yz01 { width: 100% !important; padding: 0 !important; background: transparent !important; }
+        .preview-doc { box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; }
+        @page { size: auto; margin: 15mm; }
       }
+
       @media (max-width: 767px) {
         .preview-doc { padding: 20px; font-size: 12px; }
-        .action-bar { padding: 12px 16px; }
+        .action-bar { padding: 12px; flex-direction: column; align-items: stretch; }
+        .action-bar > button { width: 100%; }
       }
     </style>
 </head>
@@ -300,24 +308,38 @@
             </div>
             <div data-id="10" class="hidden md:flex items-center gap-2 text-xs text-txt-muted">
                 <i data-id="11" data-lucide="calendar" class="w-4 h-4"></i>
-                <span data-id="12" id="nav-date-cd34">August 5, 2026</span>
+                <span data-id="12" id="nav-date-cd34">August 10, 2026</span>
             </div>
         </div>
     </nav>
 
     <!-- MAIN LAYOUT -->
-    <div data-id="13" class="max-w-screen-2xl mx-auto flex flex-col md:flex-row" style="height:calc(100vh - 57px - 62px);">
+    <div data-id="13" class="max-w-screen-2xl mx-auto flex flex-col md:flex-row min-h-[calc(100vh-57px-62px)]">
 
         <!-- LEFT PANEL -->
-        <div data-id="14" class="left-panel w-full md:w-[42%] lg:w-[40%] p-4 md:p-5 no-print" id="left-panel-ef56">
+        <div data-id="14" class="left-panel w-full md:w-[45%] lg:w-[40%] p-4 md:p-5 no-print" id="left-panel-ef56">
+
+            <!-- Load/Save Quick Action Bar -->
+            <div class="section-card bg-surface-alt border-brand-200 flex flex-wrap gap-2 items-center justify-between">
+                <span class="text-xs font-semibold text-txt-muted uppercase">Contractor Workflow</span>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button id="save-json-btn" class="pill-btn flex-1 sm:flex-none flex items-center justify-center gap-1 text-xs">
+                        <i data-lucide="save" class="w-3.5 h-3.5"></i> Save State
+                    </button>
+                    <button id="load-json-trigger-btn" class="pill-btn flex-1 sm:flex-none flex items-center justify-center gap-1 text-xs">
+                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i> Load / Edit
+                    </button>
+                    <input type="file" id="load-json-file-input" accept=".json" class="hidden" />
+                </div>
+            </div>
 
             <!-- 1. Document Type Selector -->
             <div data-id="15" class="section-card">
                 <div data-id="16" class="section-header">Document Type</div>
                 <div data-id="17" class="flex gap-2 flex-wrap" id="doc-type-group-gh78">
                     <button data-id="18" class="pill-btn active" data-type="estimate">Estimate</button>
-                    <button data-id="19" class="pill-btn" data-type="invoice">Invoice</button>
-                    <button data-id="20" class="pill-btn" data-type="deposit">50% Deposit</button>
+                    <button data-id="19" class="pill-btn" data-type="deposit">50% Deposit</button>
+                    <button data-id="20" class="pill-btn" data-type="invoice">Final Invoice</button>
                 </div>
             </div>
 
@@ -420,10 +442,10 @@
             <div data-id="83" class="section-card">
                 <div data-id="84" class="section-header">Line Items</div>
                 <div data-id="85" class="overflow-x-auto">
-                    <table data-id="86" class="w-full text-sm" id="line-items-table-wx23">
-                        <thead data-id="87">
+                    <table data-id="86" class="w-full text-sm min-w-[320px]" id="line-items-table-wx23">
+                        <thead data-id="87" class="hidden sm:table-header-group">
                             <tr data-id="88" class="text-left text-xs text-txt-muted font-semibold uppercase tracking-wide">
-                                <th data-id="89" class="pb-2 pr-2" style="min-width:160px;">Description</th>
+                                <th data-id="89" class="pb-2 pr-2">Description</th>
                                 <th data-id="90" class="pb-2 pr-2 text-center" style="width:60px;">Qty</th>
                                 <th data-id="91" class="pb-2 pr-2 text-right" style="width:100px;">Unit Price</th>
                                 <th data-id="92" class="pb-2 pr-2 text-right" style="width:80px;">Total</th>
@@ -433,18 +455,18 @@
                         <tbody data-id="94" id="line-items-body-yz45"></tbody>
                     </table>
                 </div>
-                <button data-id="95" class="add-line-btn mt-3" id="add-line-btn-ab67">
+                <button data-id="95" class="add-line-btn mt-3 w-full sm:w-auto justify-center" id="add-line-btn-ab67">
                     <i data-id="96" data-lucide="plus" class="w-4 h-4"></i> Add Line Item
                 </button>
             </div>
 
-            <!-- 7. LABOR COST -->
+            <!-- 7. LABOR COST (Enlarged Description Area) -->
             <div data-id="97" class="section-card">
                 <div data-id="98" class="section-header">Labor Cost</div>
                 <div data-id="99" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div data-id="100" class="field-group sm:col-span-3">
                         <label data-id="101" class="field-label" for="labor-desc-cd89">Labor Description</label>
-                        <input data-id="102" type="text" id="labor-desc-cd89" data-field="laborDesc" placeholder="Web development, consulting, etc." />
+                        <textarea data-id="102" id="labor-desc-cd89" rows="3" data-field="laborDesc" placeholder="Detailed scope of labor, services, consulting, installation specs..."></textarea>
                     </div>
                     <div data-id="103" class="field-group">
                         <label data-id="104" class="field-label" for="labor-hours-ef01">Hours</label>
@@ -488,54 +510,54 @@
         </div>
 
         <!-- RIGHT PANEL — LIVE PREVIEW -->
-        <div data-id="127" class="w-full md:w-[58%] lg:w-[60%] bg-surface-alt p-4 md:p-6 overflow-y-auto" id="right-panel-yz01">
+        <div data-id="127" class="w-full md:w-[55%] lg:w-[60%] bg-surface-alt p-3 sm:p-6 overflow-y-auto" id="right-panel-yz01">
             <div data-id="128" class="preview-doc mx-auto" style="max-width:700px;" id="preview-doc-ab23">
 
-                <!-- HEADER -->
-                <div data-id="129" class="flex justify-between items-start mb-6">
-                    <div data-id="130" id="preview-logo-area-cd45">
+                <!-- HEADER WITH CLEAR ALIGNMENT -->
+                <div data-id="129" class="flex flex-row justify-between items-start gap-4 mb-6 pb-4 border-b border-gray-200">
+                    <div data-id="130" id="preview-logo-area-cd45" class="w-1/2">
                         <div data-id="131" id="preview-logo-placeholder-ef67" class="w-20 h-14 bg-surface-bg rounded flex items-center justify-center text-xs text-txt-light font-semibold">LOGO</div>
-                        <img data-id="132" id="preview-logo-img-gh89" class="hidden max-h-16 rounded" alt="Business logo" />
+                        <img data-id="132" id="preview-logo-img-gh89" class="hidden max-h-16 max-w-full rounded object-contain" alt="Business logo" />
                     </div>
-                    <div data-id="133" class="text-right">
-                        <h2 data-id="134" class="text-2xl font-bold" style="color:var(--primary);" id="preview-doc-type-ij01">ESTIMATE</h2>
-                        <p data-id="135" class="text-sm text-txt-muted mt-1" id="preview-doc-num-kl23"># </p>
-                        <p data-id="136" class="text-sm text-txt-muted" id="preview-doc-date-mn45">Date: —</p>
-                        <p data-id="137" class="text-sm text-txt-muted" id="preview-due-date-op67"></p>
+                    <div data-id="133" class="w-1/2 text-right">
+                        <h2 data-id="134" class="text-xl sm:text-2xl font-bold leading-none mb-1" style="color:var(--primary);" id="preview-doc-type-ij01">ESTIMATE</h2>
+                        <p data-id="135" class="text-sm font-semibold text-txt mt-1" id="preview-doc-num-kl23"># </p>
+                        <p data-id="136" class="text-xs text-txt-muted mt-1" id="preview-doc-date-mn45">Date: —</p>
+                        <p data-id="137" class="text-xs text-txt-muted" id="preview-due-date-op67"></p>
                     </div>
                 </div>
 
-                <!-- FROM / BILL TO -->
-                <div data-id="138" class="grid grid-cols-2 gap-6 mb-6 text-sm">
-                    <div data-id="139">
-                        <p data-id="140" class="text-xs font-bold uppercase tracking-wide text-txt-muted mb-2">From</p>
-                        <p data-id="141" class="font-semibold" id="preview-from-business-qr89"></p>
+                <!-- FROM / BILL TO (EXACT GRID & MARGIN WRAPPING PREVENT BLEEDING) -->
+                <div data-id="138" class="grid grid-cols-2 gap-4 sm:gap-8 mb-6 text-xs sm:text-sm">
+                    <div data-id="139" class="break-words">
+                        <p data-id="140" class="text-xs font-bold uppercase tracking-wide text-txt-muted mb-1">From</p>
+                        <p data-id="141" class="font-bold text-txt" id="preview-from-business-qr89"></p>
                         <p data-id="142" id="preview-from-name-st01"></p>
-                        <p data-id="143" class="whitespace-pre-line" id="preview-from-address-uv23"></p>
-                        <p data-id="144" id="preview-from-phone-wx45"></p>
-                        <p data-id="145" class="text-brand-500" id="preview-from-email-yz67"></p>
-                        <p data-id="146" class="text-brand-500" id="preview-from-website-ab89"></p>
+                        <p data-id="143" class="whitespace-pre-line text-txt-muted" id="preview-from-address-uv23"></p>
+                        <p data-id="144" class="text-txt-muted" id="preview-from-phone-wx45"></p>
+                        <p data-id="145" class="text-brand-500 font-medium" id="preview-from-email-yz67"></p>
+                        <p data-id="146" class="text-brand-500 font-medium" id="preview-from-website-ab89"></p>
                     </div>
-                    <div data-id="147">
-                        <p data-id="148" class="text-xs font-bold uppercase tracking-wide text-txt-muted mb-2">Bill To</p>
-                        <p data-id="149" class="font-semibold" id="preview-to-company-cd01"></p>
+                    <div data-id="147" class="break-words">
+                        <p data-id="148" class="text-xs font-bold uppercase tracking-wide text-txt-muted mb-1">Bill To</p>
+                        <p data-id="149" class="font-bold text-txt" id="preview-to-company-cd01"></p>
                         <p data-id="150" id="preview-to-contact-ef23"></p>
-                        <p data-id="151" class="whitespace-pre-line" id="preview-to-address-gh45"></p>
-                        <p data-id="152" id="preview-to-phone-ij67"></p>
-                        <p data-id="153" class="text-brand-500" id="preview-to-email-kl89"></p>
+                        <p data-id="151" class="whitespace-pre-line text-txt-muted" id="preview-to-address-gh45"></p>
+                        <p data-id="152" class="text-txt-muted" id="preview-to-phone-ij67"></p>
+                        <p data-id="153" class="text-brand-500 font-medium" id="preview-to-email-kl89"></p>
                     </div>
                 </div>
 
                 <!-- LINE ITEMS TABLE -->
-                <div data-id="154" class="mb-4">
+                <div data-id="154" class="mb-4 overflow-x-auto">
                     <table data-id="155" class="preview-table w-full" style="border-collapse:collapse;">
                         <thead data-id="156">
                             <tr data-id="157">
-                                <th data-id="158" style="width:30px;border-radius:6px 0 0 0;">#</th>
+                                <th data-id="158" style="width:25px;border-radius:6px 0 0 0;">#</th>
                                 <th data-id="159" class="text-left">Description</th>
-                                <th data-id="160" style="width:50px;" class="text-center">Qty</th>
-                                <th data-id="161" style="width:90px;" class="text-right">Unit Price</th>
-                                <th data-id="162" style="width:90px;border-radius:0 6px 0 0;" class="text-right">Total</th>
+                                <th data-id="160" style="width:45px;" class="text-center">Qty</th>
+                                <th data-id="161" style="width:80px;" class="text-right">Unit</th>
+                                <th data-id="162" style="width:85px;border-radius:0 6px 0 0;" class="text-right">Total</th>
                             </tr>
                         </thead>
                         <tbody data-id="163" id="preview-line-items-mn01"></tbody>
@@ -543,13 +565,13 @@
                 </div>
 
                 <!-- LABOR ROW -->
-                <div data-id="164" id="preview-labor-row-op23" class="hidden mb-4">
+                <div data-id="164" id="preview-labor-row-op23" class="hidden mb-4 overflow-x-auto">
                     <table data-id="165" class="preview-table w-full" style="border-collapse:collapse;">
                         <tbody data-id="166">
                             <tr data-id="167" style="background:#f0f5ff;">
-                                <td data-id="168" style="width:30px;padding:8px 12px;" class="font-semibold text-brand-600">⚙</td>
-                                <td data-id="169" class="text-left font-semibold" style="padding:8px 12px;" id="preview-labor-desc-qr45">Labor</td>
-                                <td data-id="170" class="text-center text-sm text-txt-muted" style="padding:8px 12px;" id="preview-labor-detail-st67"></td>
+                                <td data-id="168" style="width:25px;padding:8px 12px;" class="font-semibold text-brand-600">⚙</td>
+                                <td data-id="169" class="text-left font-semibold whitespace-pre-line" style="padding:8px 12px;" id="preview-labor-desc-qr45">Labor</td>
+                                <td data-id="170" class="text-center text-xs text-txt-muted" style="padding:8px 12px;" id="preview-labor-detail-st67"></td>
                                 <td data-id="171" style="padding:8px 12px;"></td>
                                 <td data-id="172" class="text-right font-semibold tabular-nums" style="padding:8px 12px;" id="preview-labor-total-uv89">$0.00</td>
                             </tr>
@@ -559,8 +581,8 @@
 
                 <!-- TOTALS -->
                 <div data-id="173" class="flex justify-end mb-6">
-                    <div data-id="174" class="w-56">
-                        <div data-id="175" class="flex justify-between py-2 text-sm">
+                    <div data-id="174" class="w-full sm:w-64">
+                        <div data-id="175" class="flex justify-between py-1.5 text-sm">
                             <span data-id="176" class="text-txt-muted">Subtotal</span>
                             <span data-id="177" class="font-semibold tabular-nums" id="preview-subtotal-wx01">$0.00</span>
                         </div>
@@ -573,28 +595,28 @@
 
                 <!-- NOTES -->
                 <div data-id="181" id="preview-notes-section-ef89" class="hidden mb-6">
-                    <p data-id="182" class="text-xs font-bold uppercase tracking-wide text-txt-muted mb-2">Notes / Terms</p>
-                    <p data-id="183" class="text-sm text-txt-muted whitespace-pre-line" id="preview-notes-text-gh01"></p>
+                    <p data-id="182" class="text-xs font-bold uppercase tracking-wide text-txt-muted mb-1">Notes / Terms</p>
+                    <p data-id="183" class="text-xs sm:text-sm text-txt-muted whitespace-pre-line" id="preview-notes-text-gh01"></p>
                 </div>
 
                 <!-- SIGNATURES -->
-                <div data-id="184" class="grid grid-cols-2 gap-6 mt-8 pt-6 border-t" style="border-color:#e5e7eb;">
+                <div data-id="184" class="grid grid-cols-2 gap-4 sm:gap-6 mt-8 pt-4 border-t border-gray-200">
                     <div data-id="185">
-                        <div data-id="186" class="h-16 mb-1 flex items-end" id="preview-contractor-sig-area-ij23">
-                            <img data-id="187" id="preview-contractor-sig-img-kl45" class="hidden max-h-14" alt="Contractor signature" />
+                        <div data-id="186" class="h-14 mb-1 flex items-end" id="preview-contractor-sig-area-ij23">
+                            <img data-id="187" id="preview-contractor-sig-img-kl45" class="hidden max-h-12 max-w-full" alt="Contractor signature" />
                         </div>
                         <div data-id="188" class="border-t border-txt pt-1">
                             <p data-id="189" class="text-xs font-semibold" id="preview-contractor-sig-name-mn67">Contractor</p>
-                            <p data-id="190" class="text-xs text-txt-muted">Contractor</p>
+                            <p data-id="190" class="text-[10px] text-txt-muted uppercase">Contractor</p>
                         </div>
                     </div>
                     <div data-id="191">
-                        <div data-id="192" class="h-16 mb-1 flex items-end" id="preview-client-sig-area-op89">
-                            <img data-id="193" id="preview-client-sig-img-qr01" class="hidden max-h-14" alt="Client signature" />
+                        <div data-id="192" class="h-14 mb-1 flex items-end" id="preview-client-sig-area-op89">
+                            <img data-id="193" id="preview-client-sig-img-qr01" class="hidden max-h-12 max-w-full" alt="Client signature" />
                         </div>
                         <div data-id="194" class="border-t border-txt pt-1">
                             <p data-id="195" class="text-xs font-semibold" id="preview-client-sig-name-st23">Client</p>
-                            <p data-id="196" class="text-xs text-txt-muted">Client</p>
+                            <p data-id="196" class="text-[10px] text-txt-muted uppercase">Client</p>
                         </div>
                     </div>
                 </div>
@@ -607,24 +629,23 @@
     <!-- ACTION BAR -->
     <div data-id="198" class="action-bar no-print sticky bottom-0" id="action-bar-uv45">
         <button data-id="199" class="btn-primary" id="download-pdf-btn-wx67">
-            <i data-id="200" data-lucide="download" class="w-4 h-4"></i> Download PDF
+            <i data-id="200" data-lucide="printer" class="w-4 h-4"></i> Save / Print PDF
         </button>
         <button data-id="201" class="btn-outlined" id="share-email-btn-yz89">
             <i data-id="202" data-lucide="mail" class="w-4 h-4"></i> Share via Email
         </button>
-        <div data-id="203" class="flex-1"></div>
+        <div data-id="203" class="hidden sm:block flex-1"></div>
         <button data-id="204" class="btn-danger" id="clear-reset-btn-ab01">
             <i data-id="205" data-lucide="trash-2" class="w-4 h-4"></i> Clear / Reset
         </button>
     </div>
 
     <!-- FOOTER -->
-    <footer data-id="206" class="py-6 text-center no-print bg-white border-t border-bdr">
+    <footer data-id="206" class="py-4 text-center no-print bg-white border-t border-bdr">
         <p data-id="207" class="text-xs text-txt-muted">Made by Virtual Labor Force</p>
     </footer>
 
     <script>
-    // Guard Lucide
     if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
         lucide.createIcons();
     }
@@ -660,25 +681,13 @@
     // ========== PERSISTENCE ==========
     function saveState() {
         try {
-            if (window.AppSDK && window.AppSDK.storage) {
-                window.AppSDK.storage.set(STORAGE_KEY, JSON.stringify(state));
-            } else {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            }
-        } catch(e) {
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e2) {}
-        }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch(e) {}
     }
 
     function loadState() {
         try {
-            let raw = null;
-            if (window.AppSDK && window.AppSDK.storage) {
-                raw = window.AppSDK.storage.get(STORAGE_KEY);
-            }
-            if (!raw) {
-                raw = localStorage.getItem(STORAGE_KEY);
-            }
+            const raw = localStorage.getItem(STORAGE_KEY);
             if (raw) {
                 const parsed = JSON.parse(raw);
                 state = { ...state, ...parsed };
@@ -716,22 +725,39 @@
         tbody.innerHTML = '';
         state.lineItems.forEach((item, idx) => {
             const tr = document.createElement('tr');
-            tr.className = 'border-b border-bdr-light';
+            tr.className = 'border-b border-bdr-light flex flex-col sm:table-row mb-3 sm:mb-0 bg-surface-bg sm:bg-transparent p-3 sm:p-0 rounded-lg';
             const total = (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+            
             tr.innerHTML = `
-                <td class="py-2 pr-2"><input type="text" value="${escapeHtml(item.desc)}" placeholder="Item description" data-li-field="desc" data-li-idx="${idx}" class="w-full" /></td>
-                <td class="py-2 pr-2"><input type="number" value="${item.qty}" min="1" data-li-field="qty" data-li-idx="${idx}" style="width:60px;text-align:center;" /></td>
-                <td class="py-2 pr-2"><div class="relative"><span class="absolute left-2 top-1/2 -translate-y-1/2 text-txt-muted text-sm">$</span><input type="number" value="${item.price}" min="0" step="0.01" data-li-field="price" data-li-idx="${idx}" style="width:100px;padding-left:20px;text-align:right;" /></div></td>
-                <td class="py-2 pr-2 text-right tabular-nums font-medium text-sm">${formatCurrency(total)}</td>
-                <td class="py-2"><button class="delete-item-btn" data-li-delete="${idx}" title="Remove item"><i data-lucide="x" class="w-4 h-4"></i></button></td>
+                <td class="py-1 sm:py-2 sm:pr-2">
+                    <span class="sm:hidden text-[10px] font-bold text-txt-muted uppercase block">Description</span>
+                    <input type="text" value="${escapeHtml(item.desc)}" placeholder="Item description" data-li-field="desc" data-li-idx="${idx}" class="w-full" />
+                </td>
+                <td class="py-1 sm:py-2 sm:pr-2">
+                    <span class="sm:hidden text-[10px] font-bold text-txt-muted uppercase block">Qty</span>
+                    <input type="number" value="${item.qty}" min="1" data-li-field="qty" data-li-idx="${idx}" class="w-full sm:w-[60px] text-left sm:text-center" />
+                </td>
+                <td class="py-1 sm:py-2 sm:pr-2">
+                    <span class="sm:hidden text-[10px] font-bold text-txt-muted uppercase block">Price</span>
+                    <div class="relative"><span class="absolute left-2 top-1/2 -translate-y-1/2 text-txt-muted text-sm">$</span><input type="number" value="${item.price}" min="0" step="0.01" data-li-field="price" data-li-idx="${idx}" class="w-full sm:w-[100px] pl-5 text-left sm:text-right" /></div>
+                </td>
+                <td class="py-1 sm:py-2 sm:pr-2 text-left sm:text-right tabular-nums font-medium text-sm flex items-center justify-between sm:table-cell">
+                    <span class="sm:hidden text-[10px] font-bold text-txt-muted uppercase">Total:</span>
+                    <span>${formatCurrency(total)}</span>
+                </td>
+                <td class="py-1 sm:py-2 text-right">
+                    <button class="delete-item-btn w-full sm:w-auto flex justify-center items-center py-1 sm:py-0" data-li-delete="${idx}" title="Remove item">
+                        <i data-lucide="x" class="w-4 h-4"></i> <span class="sm:hidden text-xs ml-1">Remove Item</span>
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
-        // Re-create icons
+
         if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
             lucide.createIcons();
         }
-        // Attach events
+
         tbody.querySelectorAll('[data-li-field]').forEach(inp => {
             inp.addEventListener('input', function() {
                 const idx = parseInt(this.dataset.liIdx);
@@ -745,12 +771,13 @@
                 }
                 updatePreview();
                 saveState();
-                // Update row total display
-                const row = this.closest('tr');
+                const tr = this.closest('tr');
                 const total = (state.lineItems[idx].qty || 0) * (state.lineItems[idx].price || 0);
-                row.querySelectorAll('td')[3].textContent = formatCurrency(total);
+                const totalSpan = tr.querySelector('td:nth-child(4) span:last-child');
+                if (totalSpan) totalSpan.textContent = formatCurrency(total);
             });
         });
+
         tbody.querySelectorAll('[data-li-delete]').forEach(btn => {
             btn.addEventListener('click', function() {
                 const idx = parseInt(this.dataset.liDelete);
@@ -774,16 +801,13 @@
 
     // ========== PREVIEW ==========
     function updatePreview() {
-        // Doc type
         document.getElementById('preview-doc-type-ij01').textContent = getDocTypeTitle();
-        // Doc num
         document.getElementById('preview-doc-num-kl23').textContent = '# ' + (state.invoiceNum || '');
-        // Date
         document.getElementById('preview-doc-date-mn45').textContent = 'Date: ' + (formatDate(state.docDate) || '—');
-        // Due date
+        
         const dueDateEl = document.getElementById('preview-due-date-op67');
         dueDateEl.textContent = state.dueDate ? 'Due: ' + formatDate(state.dueDate) : '';
-        // Logo
+        
         const logoPlaceholder = document.getElementById('preview-logo-placeholder-ef67');
         const logoImg = document.getElementById('preview-logo-img-gh89');
         if (state.logo) {
@@ -794,20 +818,20 @@
             logoPlaceholder.classList.remove('hidden');
             logoImg.classList.add('hidden');
         }
-        // From fields
+
         document.getElementById('preview-from-business-qr89').textContent = state.fromBusiness || '';
         document.getElementById('preview-from-name-st01').textContent = state.fromName || '';
         document.getElementById('preview-from-address-uv23').textContent = state.fromAddress || '';
         document.getElementById('preview-from-phone-wx45').textContent = state.fromPhone || '';
         document.getElementById('preview-from-email-yz67').textContent = state.fromEmail || '';
         document.getElementById('preview-from-website-ab89').textContent = state.fromWebsite || '';
-        // To fields
+        
         document.getElementById('preview-to-company-cd01').textContent = state.toCompany || '';
         document.getElementById('preview-to-contact-ef23').textContent = state.toContact || '';
         document.getElementById('preview-to-address-gh45').textContent = state.toAddress || '';
         document.getElementById('preview-to-phone-ij67').textContent = state.toPhone || '';
         document.getElementById('preview-to-email-kl89').textContent = state.toEmail || '';
-        // Line items preview
+        
         const previewTbody = document.getElementById('preview-line-items-mn01');
         previewTbody.innerHTML = '';
         let lineItemsTotal = 0;
@@ -824,12 +848,12 @@
             `;
             previewTbody.appendChild(tr);
         });
-        // Labor
+
         const laborHours = parseFloat(state.laborHours) || 0;
         const laborRate = parseFloat(state.laborRate) || 0;
         const laborTotal = laborHours * laborRate;
         const laborRow = document.getElementById('preview-labor-row-op23');
-        if (laborHours > 0 && laborRate > 0) {
+        if (laborHours > 0 || laborRate > 0 || (state.laborDesc && state.laborDesc.trim())) {
             laborRow.classList.remove('hidden');
             document.getElementById('preview-labor-desc-qr45').textContent = state.laborDesc || 'Labor';
             document.getElementById('preview-labor-detail-st67').textContent = laborHours + ' hrs × ' + formatCurrency(laborRate) + '/hr';
@@ -838,11 +862,12 @@
             laborRow.classList.add('hidden');
         }
         document.getElementById('labor-total-display-ij45').textContent = formatCurrency(laborTotal);
-        // Totals
+
         const subtotal = lineItemsTotal + laborTotal;
         document.getElementById('preview-subtotal-wx01').textContent = formatCurrency(subtotal);
         const totalLabel = document.getElementById('preview-total-label-ab45');
         const totalAmount = document.getElementById('preview-total-amount-cd67');
+        
         if (state.docType === 'deposit') {
             totalLabel.textContent = 'Deposit Due (50%)';
             totalAmount.textContent = formatCurrency(subtotal / 2);
@@ -850,7 +875,7 @@
             totalLabel.textContent = 'Total Due';
             totalAmount.textContent = formatCurrency(subtotal);
         }
-        // Notes
+
         const notesSection = document.getElementById('preview-notes-section-ef89');
         if (state.notes && state.notes.trim()) {
             notesSection.classList.remove('hidden');
@@ -858,7 +883,7 @@
         } else {
             notesSection.classList.add('hidden');
         }
-        // Signatures
+
         const creatorSigImg = document.getElementById('preview-contractor-sig-img-kl45');
         if (state.creatorSig) {
             creatorSigImg.classList.remove('hidden');
@@ -873,10 +898,9 @@
         } else {
             clientSigImg.classList.add('hidden');
         }
-        // Signature names
+
         document.getElementById('preview-contractor-sig-name-mn67').textContent = state.fromName || 'Contractor';
         document.getElementById('preview-client-sig-name-st23').textContent = state.toContact || state.toCompany || 'Client';
-        // Creator sig label
         document.getElementById('contractor-sig-label-mn89').textContent = (state.fromName || 'Contractor') + ' — Signature';
         document.getElementById('client-sig-label-st45').textContent = (state.toContact || state.toCompany || 'Client') + ' — Signature';
     }
@@ -885,12 +909,7 @@
     function bindFormFields() {
         document.querySelectorAll('[data-field]').forEach(el => {
             const field = el.dataset.field;
-            // Set initial value
-            if (el.tagName === 'TEXTAREA') {
-                el.value = state[field] || '';
-            } else {
-                el.value = state[field] || '';
-            }
+            el.value = state[field] || '';
             el.addEventListener('input', function() {
                 state[field] = this.value;
                 updatePreview();
@@ -899,20 +918,26 @@
         });
     }
 
+    function syncFormFieldsFromState() {
+        document.querySelectorAll('[data-field]').forEach(el => {
+            const field = el.dataset.field;
+            el.value = state[field] || '';
+        });
+        bindDocTypePills();
+        renderLineItems();
+        updatePreview();
+    }
+
     // ========== DOC TYPE PILLS ==========
     function bindDocTypePills() {
         const pills = document.querySelectorAll('#doc-type-group-gh78 .pill-btn');
         pills.forEach(pill => {
-            if (pill.dataset.type === state.docType) {
-                pill.classList.add('active');
-            } else {
-                pill.classList.remove('active');
-            }
-            pill.addEventListener('click', function() {
+            pill.classList.toggle('active', pill.dataset.type === state.docType);
+            pill.onclick = function() {
                 pills.forEach(p => p.classList.remove('active'));
                 this.classList.add('active');
                 state.docType = this.dataset.type;
-                // Update invoice number prefix
+                
                 const numInput = document.getElementById('invoice-num-ij90');
                 if (state.docType === 'estimate' && state.invoiceNum.startsWith('INV-')) {
                     state.invoiceNum = state.invoiceNum.replace('INV-', 'EST-');
@@ -923,7 +948,7 @@
                 }
                 updatePreview();
                 saveState();
-            });
+            };
         });
     }
 
@@ -956,50 +981,26 @@
             saveState();
         }
 
-        if (state.logo) {
-            showLogo(state.logo);
-        }
+        if (state.logo) showLogo(state.logo);
 
-        zone.addEventListener('click', function(e) {
+        zone.onclick = (e) => {
             if (e.target === removeBtn || removeBtn.contains(e.target)) return;
             input.click();
-        });
+        };
 
-        zone.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            zone.style.background = '#e8f0ff';
-        });
-
-        zone.addEventListener('dragleave', function() {
-            zone.style.background = '';
-        });
-
-        zone.addEventListener('drop', function(e) {
-            e.preventDefault();
-            zone.style.background = '';
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                readFileAsBase64(file, showLogo);
-            }
-        });
-
-        input.addEventListener('change', function() {
+        input.onchange = function() {
             const file = this.files[0];
             if (file && file.type.startsWith('image/')) {
-                readFileAsBase64(file, showLogo);
+                const reader = new FileReader();
+                reader.onload = (e) => showLogo(e.target.result);
+                reader.readAsDataURL(file);
             }
-        });
+        };
 
-        removeBtn.addEventListener('click', function(e) {
+        removeBtn.onclick = (e) => {
             e.stopPropagation();
             removeLogo();
-        });
-    }
-
-    function readFileAsBase64(file, callback) {
-        const reader = new FileReader();
-        reader.onload = function(e) { callback(e.target.result); };
-        reader.readAsDataURL(file);
+        };
     }
 
     // ========== SIGNATURE PADS ==========
@@ -1020,7 +1021,6 @@
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            // Redraw from state if exists
             if (state[stateKey]) {
                 const img = new Image();
                 img.onload = function() {
@@ -1077,7 +1077,6 @@
             if (!drawing) return;
             drawing = false;
             ctx.closePath();
-            // Save signature
             state[stateKey] = canvas.toDataURL('image/png');
             updatePreview();
             saveState();
@@ -1105,69 +1104,50 @@
         window.addEventListener('resize', resizeCanvas);
     }
 
-    // ========== ADD LINE ITEM ==========
-    function bindAddLineItem() {
-        document.getElementById('add-line-btn-ab67').addEventListener('click', function() {
-            state.lineItems.push({ desc: '', qty: 1, price: 0 });
-            renderLineItems();
-            updatePreview();
-            saveState();
+    // ========== SAVE / LOAD WORKFLOW (.JSON FILE) ==========
+    function bindJsonWorkflow() {
+        document.getElementById('save-json-btn').addEventListener('click', function() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchor = document.createElement('a');
+            const clientName = (state.toCompany || state.toContact || 'Client').replace(/[^a-zA-Z0-9]/g, '-');
+            const fileName = `${getDocTypeLabel()}-${state.invoiceNum || 'draft'}-${clientName}.vlf.json`;
+            
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", fileName);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        });
+
+        const fileInput = document.getElementById('load-json-file-input');
+        document.getElementById('load-json-trigger-btn').addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const loadedState = JSON.parse(evt.target.result);
+                    state = { ...state, ...loadedState };
+                    saveState();
+                    syncFormFieldsFromState();
+                    alert("Document state successfully reloaded! You can now edit line items, change document types, or export a new PDF.");
+                } catch(err) {
+                    alert("Invalid JSON file provided.");
+                }
+            };
+            reader.readAsText(file);
+            this.value = '';
         });
     }
 
-    // ========== PDF DOWNLOAD ==========
+    // ========== PRINT / PDF EXPORT ==========
     function bindPdfDownload() {
-        document.getElementById('download-pdf-btn-wx67').addEventListener('click', async function() {
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="animate-pulse">Generating PDF...</span>';
-            btn.disabled = true;
-
-            try {
-                // Hide watermarks temporarily
-                const previewEl = document.getElementById('preview-doc-ab23');
-
-                const canvas = await html2canvas(previewEl, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    logging: false
-                });
-
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = 210;
-                const pdfHeight = 297;
-                const imgWidth = pdfWidth - 20;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                const imgData = canvas.toDataURL('image/png');
-
-                if (imgHeight <= pdfHeight - 20) {
-                    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                } else {
-                    // Scale to fit
-                    const scaledHeight = pdfHeight - 20;
-                    const scaledWidth = (canvas.width * scaledHeight) / canvas.height;
-                    pdf.addImage(imgData, 'PNG', (pdfWidth - scaledWidth) / 2, 10, scaledWidth, scaledHeight);
-                }
-
-                const clientName = (state.toCompany || state.toContact || 'Client').replace(/[^a-zA-Z0-9]/g, '-');
-                const docType = getDocTypeLabel().replace(/\s+/g, '-');
-                const filename = `${docType}-${state.invoiceNum || 'draft'}-${clientName}.pdf`;
-
-                pdf.save(filename);
-            } catch(err) {
-                console.error('PDF generation error:', err);
-                alert('Error generating PDF. Please try again.');
-            }
-
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            // Recreate icons inside button
-            if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
-                lucide.createIcons();
-            }
+        document.getElementById('download-pdf-btn-wx67').addEventListener('click', function() {
+            window.print();
         });
     }
 
@@ -1196,7 +1176,7 @@
             const laborHours = parseFloat(state.laborHours) || 0;
             const laborRate = parseFloat(state.laborRate) || 0;
             const laborTotal = laborHours * laborRate;
-            if (laborTotal > 0) {
+            if (laborTotal > 0 || state.laborDesc) {
                 body += `\nLabor: ${state.laborDesc || 'Labor'} — ${laborHours} hrs × ${formatCurrency(laborRate)}/hr = ${formatCurrency(laborTotal)}\n`;
                 subtotal += laborTotal;
             }
@@ -1212,15 +1192,14 @@
                 body += `\nNotes: ${state.notes}\n`;
             }
 
-            body += `\nPlease find your ${docLabel.toLowerCase()} attached.\n\n`;
-            body += `Thank you,\n${state.fromName || ''}\n${state.fromEmail || ''}\n${state.fromWebsite || ''}`;
+            body += `\nThank you,\n${state.fromName || ''}\n${state.fromEmail || ''}\n${state.fromWebsite || ''}`;
 
             const mailto = `mailto:${to}?subject=${subject}&body=${encodeURIComponent(body)}`;
             window.open(mailto, '_blank');
         });
     }
 
-    // ========== CLEAR / RESET ==========
+    // ========== RESET ==========
     function bindClearReset() {
         document.getElementById('clear-reset-btn-ab01').addEventListener('click', function() {
             if (!confirm('Are you sure you want to clear all data? This cannot be undone.')) return;
@@ -1252,41 +1231,7 @@
             };
 
             saveState();
-
-            // Reset form fields
-            document.querySelectorAll('[data-field]').forEach(el => {
-                el.value = state[el.dataset.field] || '';
-            });
-
-            // Reset pills
-            const pills = document.querySelectorAll('#doc-type-group-gh78 .pill-btn');
-            pills.forEach(p => {
-                p.classList.toggle('active', p.dataset.type === 'estimate');
-            });
-
-            // Reset logo
-            document.getElementById('upload-placeholder-st90').classList.remove('hidden');
-            document.getElementById('upload-preview-uv12').classList.add('hidden');
-            document.getElementById('upload-zone-op56').classList.remove('has-logo');
-            document.getElementById('logo-input-qr78').value = '';
-
-            // Clear signature canvases
-            ['creator-sig-canvas-op01', 'client-sig-canvas-uv67'].forEach(id => {
-                const c = document.getElementById(id);
-                const ctx = c.getContext('2d');
-                const rect = c.getBoundingClientRect();
-                ctx.clearRect(0, 0, rect.width * (window.devicePixelRatio || 1), 120 * (window.devicePixelRatio || 1));
-                // redraw watermark
-                ctx.save();
-                ctx.fillStyle = '#ccc';
-                ctx.font = '14px Inter, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('Sign here...', rect.width / 2, 68);
-                ctx.restore();
-            });
-
-            renderLineItems();
-            updatePreview();
+            syncFormFieldsFromState();
         });
     }
 
@@ -1297,16 +1242,24 @@
         bindDocTypePills();
         bindLogoUpload();
         renderLineItems();
-        bindAddLineItem();
+        bindJsonWorkflow();
+        
+        document.getElementById('add-line-btn-ab67').onclick = function() {
+            state.lineItems.push({ desc: '', qty: 1, price: 0 });
+            renderLineItems();
+            updatePreview();
+            saveState();
+        };
+
         bindPdfDownload();
         bindEmailShare();
         bindClearReset();
-        initSignaturePad('creator-sig-canvas-op01', 'creatorSig', 'clear-creator-sig-qr23');
+        
+        initSignaturePad('contractor-sig-canvas-op01', 'creatorSig', 'clear-contractor-sig-qr23');
         initSignaturePad('client-sig-canvas-uv67', 'clientSig', 'clear-client-sig-wx89');
         updatePreview();
     }
 
-    // Ensure DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
